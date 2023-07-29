@@ -12,11 +12,14 @@ def get_news_from_feed():
     """
     Retrieves news items from a RSS feed URL and returns a list of news items.
 
-    This function sends a GET request to the RSS feed URL and parses the response content into an ordered dictionary.
-    The function assumes that the RSS feed URL is in a specific format and structure.
+    This function sends a GET request to the RSS feed URL and parses the
+    response content into an ordered dictionary.
+    The function assumes that the RSS feed URL is in a specific format
+    and structure.
 
     Returns:
-    A list of news items, where each item is a dictionary containing the title, source URL, and link of the news article.
+    A list of news items, where each item is a dictionary containing the
+    title, source URL, and link of the news article.
     """
     request = requests.get(url)
     news_data = xmltodict.parse(request.content)
