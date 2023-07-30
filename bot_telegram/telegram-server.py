@@ -1,5 +1,6 @@
 # Substitua 'YOUR_TELEGRAM_BOT_TOKEN' pelo token do seu bot fornecido pelo @BotFather
-import requests
+from typing import Dict, List
+import aiohttp
 import os
 
 TOKEN = os.environ.get("TOKEN")
@@ -54,19 +55,13 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
-
 # Define a few command handlers. These usually take the two arguments update and
-# context.
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Send a message when the command /start is issued."""
-    user = update.effective_user
-    await update.message.reply_html(
-        rf"Hi {user.mention_html()}!",
-        reply_markup=ForceReply(selective=True),
-    )
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def start(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+) -> None:
     """Send a message when the command /start is issued."""
     user = update.effective_user
     await update.message.reply_html(
@@ -75,7 +70,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def help_command(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+) -> None:
     """Send a message when the command /help is issued."""
     await update.message.reply_html("Help!")
 
@@ -87,33 +85,41 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(update.message.text)
 
 
+async def get_news() -> List[Dict[str, str]]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get("http://web:8000/items") as response:
+            return await response.json()
+
+
 async def noticia(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    r = requests.get("http://web:8000/items")
-    await update.message.reply_text(r.json()[0]["title"])
-    await update.message.reply_html("<a>adfasdfasd</a>")
-    # await update.message.reply_text(r.json()[0]['title'])
-    # await update.message.reply_html(r.json()[0]['link'])
-    await update.message.reply_text("A primeira notícia da API do Gustavo")
-    await update.message.reply_text("-------------------")
+    news = await get_news()
+    await update.message.reply_text(news[0]["title"])
+    await update.message.reply_text(
+        'A primeira notícia da API do Gustavo\n-------------------'
+    )
 
 
-async def noticia_t(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    r = requests.get("http://web:8000/items")
-    # print("gustavo",r.json()[0])
+async def noticia_t(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE
+) -> None:
+
+    news = await get_news()
     for i in range(3):
-        await update.message.reply_text(r.json()[i]["title"])
-    await update.message.reply_text("Todas as noticias da API do Gustavo")
-    await update.message.reply_text("-------------------")
+        await update.message.reply_text(news[i]["title"])
+    await update.message.reply_text(
+        "Todas as noticias da API do Gustavo\n-------------------"
+    )
 
 
 async def noticias(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    r = requests.get("http://web:8000/items")
-    # print("gustavo",r.json()[0])
-    for i in range(len(r.json())):
-        await update.message.reply_text(r.json()[i]["title"])
-        await update.message.reply_text(r.json()[i]["link"])
-    await update.message.reply_text("Todas as noticias da API do Gustavo")
-    await update.message.reply_text("-------------------")
+    news = await get_news()
+    for i in range(len(news)):
+        await update.message.reply_text(news[i]["title"])
+        await update.message.reply_text(news[i]["link"])
+    await update.message.reply_text(
+        "Todas as noticias da API do Gustavo\n-------------------"
+    )
 
 
 def main() -> None:
@@ -122,15 +128,22 @@ def main() -> None:
     application = Application.builder().token(TOKEN).build()
 
     # on different commands - answer in Telegram
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("gugu", start))
-    application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CommandHandler("noticia", noticia))
-    application.add_handler(CommandHandler("noticias", noticias))
-    application.add_handler(CommandHandler("noticia_t", noticia_t))
+    handlers = {
+        "start": start,
+        "gugu": start,
+        "help": help_command,
+        "noticia": noticia,
+        "noticias": noticias,
+        "noticia_t": noticia_t
+    }
+
+    for command, handler in handlers.items():
+        application.add_handler(CommandHandler(command, handler))
 
     # on non command i.e message - echo the message on Telegram
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+    application.add_handler(
+        MessageHandler(filters.TEXT & ~filters.COMMAND, echo)
+    )
 
     # Run the bot until the user presses Ctrl-C
     application.run_polling(allowed_updates=Update.ALL_TYPES)
