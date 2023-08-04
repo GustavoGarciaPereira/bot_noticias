@@ -43,7 +43,7 @@ services:
 
   web_telegram:
     build: .
-    command: python bot_telegram/telegram-server.py
+    command: python bot_telegram/telegram_server.py
     volumes:
       - .:/app
     depends_on:
