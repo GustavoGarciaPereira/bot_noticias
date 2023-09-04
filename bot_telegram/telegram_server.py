@@ -87,13 +87,14 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def get_news() -> List[Dict[str, str]]:
     async with aiohttp.ClientSession() as session:
-        async with session.get("http://web:8000/items") as response:
+        async with session.get("http://web:8080/items") as response:
             return await response.json()
 
 
 async def noticia(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     news = await get_news()
     await update.message.reply_text(news[0]["title"])
+    await update.message.reply_text(news[0]["link"])
     await update.message.reply_text(
         'A primeira notícia da API do Gustavo\n-------------------'
     )

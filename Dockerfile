@@ -8,8 +8,11 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Atualize pip e instale as dependências especificadas no requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copie o restante dos arquivos do aplicativo para o diretório de trabalho
 
 COPY . /app/
+
+CMD ["uvicorn", "fast_api.main:app", "--host", "0.0.0.0", "--port", "8080"]

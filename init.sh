@@ -3,7 +3,7 @@
 # Verifica se o arquivo .env já existe
 if [ ! -f .env ]; then
     echo "Criando o arquivo .env..."
-    echo "WEB_API_URL=http://web:8000" >> .env
+    echo "WEB_API_URL=http://web:8080" >> .env
     echo "TOKEN=''" >> .env
 fi
 
