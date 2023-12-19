@@ -35,18 +35,19 @@ version: '3'
 services:
   web:
     build: .
-    command: uvicorn  fast_api.main:app --host 0.0.0.0 --port 8080
+    # command: uvicorn  fast_api.main:app --host 0.0.0.0 --port 8080
     volumes:
       - .:/app
     ports:
       - 8080:8080
-
-  web_telegram:
-    build: .
-    command: python bot_telegram/telegram_server.py
-    volumes:
-      - .:/app
-    depends_on:
-      - web
     env_file:
       - .env
+  # web_telegram:
+  #   build: .
+  #   command: python bot_telegram/telegram_server.py
+  #   volumes:
+  #     - .:/app
+  #   depends_on:
+  #     - web
+  #   env_file:
+  #     - .env
