@@ -4,6 +4,7 @@ import aiohttp
 import os
 
 TOKEN = os.environ.get("TOKEN")
+URL = os.environ.get("WEB_API_URL")
 
 #!/usr/bin/env python
 # pylint: disable=unused-argument, wrong-import-position
@@ -87,7 +88,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def get_news() -> List[Dict[str, str]]:
     async with aiohttp.ClientSession() as session:
-        async with session.get("http://web:8080/items") as response:
+        async with session.get(f"{URL}/items") as response:
             return await response.json()
 
 
