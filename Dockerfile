@@ -32,7 +32,7 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copie o restante dos arquivos do aplicativo para o diretório de trabalho
-COPY start.sh /app/
+COPY . /app/
 RUN chmod +x /app/start.sh
 
 WORKDIR /app
