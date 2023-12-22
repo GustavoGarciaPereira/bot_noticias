@@ -2,21 +2,27 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import requests
 import xmltodict
+import os
+
+
+ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN")
 
 
 app = FastAPI()
 
-origins = ["*"]
+# Defina as origens permitidas
+origins = [
+    ALLOWED_ORIGIN
+]
 
+# Adicione o middleware CORS com as origens especificadas
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=origins,  # Use a lista de origens definida acima
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Permite todos os métodos
+    allow_headers=["*"],  # Permite todos os cabeçalhos
 )
-
-
 
 url = "https://news.google.com/rss?hl=pt-BR&gl=BR&ceid=BR:pt-419"
 
