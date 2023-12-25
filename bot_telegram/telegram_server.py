@@ -45,6 +45,7 @@ from telegram.ext import (
     ContextTypes,
     MessageHandler,
     filters,
+    CallbackContext
 )
 
 # Enable logging
@@ -124,6 +125,21 @@ async def noticias(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
+async def menu(update: Update, context: CallbackContext) -> None:
+    """Send a message when the command /menu is issued."""
+    menu_message = (
+        "Comandos disponíveis:\n"
+        "/start - Iniciar o bot\n"
+        "/gugu - Comando especial Gugu\n"
+        "/help - Mostrar ajuda\n"
+        "/noticia - Obter uma notícia\n"
+        "/noticias - Listar notícias\n"
+        "/noticia_t - Notícia específica\n"
+    )
+    update.message.reply_text(menu_message)
+
+
+
 def main() -> None:
     """Start the bot."""
     # Create the Application and pass it your bot's token.
@@ -134,13 +150,14 @@ def main() -> None:
         "start": start,
         "gugu": start,
         "help": help_command,
+        "menu": menu,  # Adicione esta linha
         "noticia": noticia,
         "noticias": noticias,
         "noticia_t": noticia_t
     }
-
     for command, handler in handlers.items():
         application.add_handler(CommandHandler(command, handler))
+
 
     # on non command i.e message - echo the message on Telegram
     application.add_handler(
