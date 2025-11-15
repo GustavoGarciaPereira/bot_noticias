@@ -1,0 +1,9 @@
+fastapi==0.104.1
+uvicorn==0.24.0
+requests==2.31.0
+xmltodict==0.13.0
+python-multipart==0.0.6
+python-telegram-bot==20.7
+requests==2.31.0
+python-dotenv==1.0.0
+python-multipart==0.0.6
