@@ -1,77 +1,260 @@
-https://docs.python-telegram-bot.org/en/stable/
+# 📰 RSS News Bot - FastAPI & Telegram
 
+Um sistema moderno de agregação de notícias com API RESTful em FastAPI e bot inteligente para Telegram, seguindo princípios de arquitetura em camadas e boas práticas de desenvolvimento.
 
-# Bot de Telegram com FastAPI
+## 🌟 Características
 
-Este é um projeto que implementa um bot de Telegram utilizando o framework web FastAPI para fornecer informações sobre notícias. O bot é capaz de responder a comandos específicos e fazer solicitações a uma API FastAPI para obter as notícias.
+- **🚀 API FastAPI** - Documentação automática com Swagger/OpenAPI
+- **🤖 Bot Telegram** - Interface conversacional intuitiva
+- **🏗️ Arquitetura em Camadas** - Código organizado e maintainable
+- **📊 Múltiplas Fontes** - Agregação de notícias do Google News RSS
+- **🔍 Busca Avançada** - Filtros por categoria, data e termos
+- **📈 Estatísticas** - Análises em tempo real
+- **🐳 Containerização** - Deploy simplificado com Docker
 
-## Pré-requisitos
-
-Certifique-se de ter instalado o Python em sua máquina. Além disso, as seguintes bibliotecas devem estar instaladas:
-
-- `python-telegram-bot`: Uma biblioteca que fornece uma interface para a API do Telegram.
-- `httpx`: Uma biblioteca para fazer solicitações HTTP.
-
-Você pode instalar as dependências usando o arquivo `requirements.txt` fornecido no projeto.
-
-## Configuração
-
-Antes de executar o bot, é necessário configurar o token do bot do Telegram. Siga os seguintes passos:
-
-1. Crie um novo bot no Telegram conversando com o @BotFather.
-2. Copie o token fornecido pelo @BotFather.
-3. Defina o token do bot como uma variável de ambiente com o nome "TOKEN" em seu sistema operacional.
-
-3. Execute o script `init.sh` para iniciar o projeto:
+## 🏗️ Arquitetura
 
 ```
-
-Este script irá:
-
-- Criar o arquivo `.env` com as variáveis de ambiente necessárias.
-- Instalar as dependências do Python listadas em `requirements.txt`.
-- Fazer o build das imagens Docker usando o `docker-compose`.
-- Iniciar os contêineres com `docker-compose up`.
-- Executar os testes automatizados com pytest dentro do contêiner `web`.
-- Desligar e remover os contêineres após a execução.
-
-Certifique-se de que o Docker e o docker-compose estejam instalados e configurados corretamente no seu sistema antes de executar o script.
+rss-news-bot/
+├── app/                          # FastAPI Application
+│   ├── core/                     # Configurações e segurança
+│   ├── models/                   # Modelos de dados
+│   ├── schemas/                  # Schemas Pydantic
+│   ├── repositories/             # Camada de acesso a dados
+│   ├── services/                 # Lógica de negócio
+│   ├── routers/                  # Endpoints da API
+│   └── main.py                   # Aplicação principal
+├── telegram-bot/                 # Bot do Telegram
+│   ├── bot.py                    # Classe principal do bot
+│   ├── config.py                 # Configurações
+│   └── requirements.txt          # Dependências do bot
+├── docker-compose.yml            # Orquestração de containers
+├── requirements.txt              # Dependências da API
+└── README.md                     # Documentação
 ```
-4. Agora, o projeto estará em execução, e você poderá acessar a API FastAPI e interagir com o bot Telegram para obter notícias do RSS.
 
+## 📋 Pré-requisitos
 
-## Executando o Bot
+- Python 3.9+
+- Docker e Docker Compose (opcional)
+- Conta no Telegram
 
-Para iniciar o bot, execute o seguinte comando:
+## ⚙️ Configuração Rápida
+
+### Método 1: Docker (Recomendado)
 
 ```bash
+# Clone o repositório
+git clone <seu-repositorio>
+cd rss-news-bot
+
+# Execute o script de inicialização
+chmod +x init.sh
+./init.sh
+```
+
+O script `init.sh` irá:
+- ✅ Criar arquivo `.env` com variáveis de ambiente
+- ✅ Instalar dependências Python
+- ✅ Buildar imagens Docker
+- ✅ Iniciar containers
+- ✅ Executar testes automatizados
+
+### Método 2: Desenvolvimento Local
+
+```bash
+# Configurar ambiente virtual
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate  # Windows
+
+# Instalar dependências
+pip install -r requirements.txt
+pip install -r telegram-bot/requirements.txt
+
+# Configurar variáveis de ambiente
+cp .env.example .env
+# Edite .env com suas configurações
+```
+
+## 🔧 Configuração do Bot Telegram
+
+1. **Criar Bot no Telegram:**
+   ```bash
+   # Busque por @BotFather no Telegram
+   # Execute /newbot
+   # Siga as instruções e guarde o token
+   ```
+
+2. **Configurar Variáveis de Ambiente:**
+   ```env
+   # .env
+   TELEGRAM_BOT_TOKEN=seu_token_do_bot_aqui
+   API_BASE_URL=http://localhost:8000
+   ALLOWED_ORIGIN=http://localhost:3000
+   RSS_FEED_URL=https://news.google.com/rss?hl=pt-BR&gl=BR&ceid=BR:pt-419
+   ```
+
+## 🚀 Execução
+
+### Opção 1: Docker Compose
+```bash
+docker-compose up -d
+```
+
+### Opção 2: Execução Manual
+```bash
+# Terminal 1 - API FastAPI
+uvicorn app.main:app --reload --port 8000
+
+# Terminal 2 - Bot Telegram
+cd telegram-bot
 python bot.py
 ```
 
+## 📡 Acesso aos Serviços
+
+- **🌐 API FastAPI:** http://localhost:8000
+- **📚 Documentação Interativa:** http://localhost:8000/docs
+- **📖 Documentação Alternativa:** http://localhost:8000/redoc
+
+## 🤖 Comandos do Bot Telegram
+
+| Comando | Descrição | Exemplo |
+|---------|-----------|---------|
+| `/start` | Inicia o bot e mostra boas-vindas | `/start` |
+| `/noticias` | 3 notícias rápidas | `/noticias` |
+| `/digest` | Resumo diário (5 notícias) | `/digest` |
+| `/digest N` | Resumo com N notícias | `/digest 10` |
+| `/urgentes` | Notícias das últimas 2h | `/urgentes` |
+| `/buscar TERMO` | Busca por termo | `/buscar tecnologia` |
+| `/categorias` | Lista categorias disponíveis | `/categorias` |
+| `/estatisticas` | Estatísticas do dia | `/estatisticas` |
+| `/ajuda` | Mostra ajuda completa | `/ajuda` |
+
+## 🛠️ API Endpoints Principais
+
+### Notícias
+- `GET /news/` - Lista todas as notícias
+- `GET /news/search?q=termo` - Busca avançada
+- `GET /news/categories` - Lista categorias
+- `GET /news/sources` - Lista fontes
+- `GET /news/today` - Notícias de hoje
+
+### Telegram (Otimizado)
+- `GET /telegram/digest?limit=5` - Resumo para bot
+- `GET /telegram/search?q=termo` - Busca para bot
+- `GET /telegram/breaking` - Notícias urgentes
+- `GET /telegram/stats` - Estatísticas formatadas
+- `GET /telegram/quick?limit=3` - Notícias rápidas
+
+## 🧪 Testes
+
 ```bash
-docker-compose build
-docker-compose up
+# Executar testes
+docker-compose exec web pytest
+
+# Executar testes com cobertura
+docker-compose exec web pytest --cov=app
+
+# Testes específicos
+docker-compose exec web pytest tests/test_services.py -v
 ```
 
-## O bot estará pronto para receber comandos no Telegram.
+## 🔍 Exemplos de Uso
 
+### Via API Directamente
+```bash
+# Notícias de tecnologia
+curl "http://localhost:8000/telegram/search?q=tecnologia"
 
+# Resumo diário
+curl "http://localhost:8000/telegram/digest?limit=5"
 
-## Comandos Disponíveis
+# Estatísticas
+curl "http://localhost:8000/telegram/stats"
 ```
-/start: Inicia a interação com o bot e recebe uma mensagem de boas-vindas.
-/help: Exibe uma mensagem de ajuda.
-/noticia: Obtém a primeira notícia do feed da API FastAPI e envia o título para o usuário.
-/noticia_t: Obtém as três primeiras notícias do feed da API FastAPI e envia os títulos para o usuário.
-/noticias: Obtém todas as notícias do feed da API FastAPI e envia os títulos e links para o usuário.
-Funcionamento
-O bot, ao receber um comando /noticia, /noticia_t ou /noticias, faz uma solicitação HTTP à API FastAPI que está sendo executada em outro serviço. A API FastAPI obtém as notícias de um feed RSS do Google News e retorna os dados em formato JSON. O bot processa os dados recebidos e envia as informações de volta ao usuário do Telegram.
+
+### Via Bot Telegram
+1. Busque seu bot no Telegram pelo username
+2. Envie `/start` para iniciar
+3. Use os comandos listados acima
+
+## 🐛 Solução de Problemas
+
+### Problemas Comuns
+
+**Bot não responde:**
+- Verifique se o token do bot está correto no `.env`
+- Confirme que a API está rodando na porta 8000
+
+**Erro de conexão com API:**
+```bash
+# Verifique se os serviços estão rodando
+docker-compose ps
+
+# Ver logs
+docker-compose logs web
+docker-compose logs bot
 ```
-Licença
-Este projeto está sob a licença MIT, o que significa que você pode modificá-lo e usá-lo livremente para seus próprios fins.
 
-Aviso
-Este projeto é apenas um exemplo didático e não foi projetado para uso em produção. Tenha cuidado ao utilizar o código em ambientes de produção e considere as melhores práticas de segurança ao lidar com solicitações externas.
+**Problemas de RSS:**
+- Verifique a URL do feed no `.env`
+- Confirme conexão com a internet
 
+### Comandos Úteis
+```bash
+# Reiniciar serviços
+docker-compose restart
 
-Lembre-se de substituir as informações necessárias no `README.md`, como a descrição do projeto, os comandos disponíveis, as instruções de configuração e execução, bem como quaisquer outros detalhes relevantes para o seu projeto específico. O arquivo `README.md` é uma ferramenta importante para compartilhar informações sobre o projeto e ajudar os colaboradores a entenderem como funciona e como contribuir para ele.
+# Ver logs em tempo real
+docker-compose logs -f
+
+# Parar todos os serviços
+docker-compose down
+```
+
+## 📈 Monitoramento e Logs
+
+```bash
+# Logs da aplicação
+docker-compose logs web
+
+# Logs do bot
+docker-compose logs bot
+
+# Logs em tempo real
+docker-compose logs -f web bot
+```
+
+## 🤝 Contribuindo
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## ⚠️ Aviso
+
+Este projeto é para fins educacionais e de demonstração. Não é recomendado para uso em produção sem as devidas adaptações de segurança e monitoramento.
+
+## 🆕 Atualizações da Versão 2.0
+
+- ✅ Arquitetura em camadas (Repository/Service/Router)
+- ✅ Bot Telegram com comandos avançados
+- ✅ Sistema de busca e filtros
+- ✅ Estatísticas em tempo real
+- ✅ Containerização completa
+- ✅ Documentação interativa
+- ✅ Tratamento de erros robusto
+
+---
+
+**Desenvolvido com ❤️ usando FastAPI e Python-Telegram-Bot**
+
+Para dúvidas e suporte, abra uma issue no repositório do projeto.
